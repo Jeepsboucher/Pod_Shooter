@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : NetworkBehaviour {
 
     Rigidbody rigidBody;
     [SerializeField]float DestroyBulletAfterCollisionTime = 5f;
@@ -17,13 +18,16 @@ public class Bullet : MonoBehaviour {
         Invoke("DetroyBullet", maxLifeTime);
     }
 
-
-
     private void OnCollisionEnter(Collision collision) {
         Damagable damagable = collision.gameObject.GetComponent<Damagable>();
-        if (damagable != null) {
-            damagable.DealDamage(bulletDamage);
+        if(isServer)
+        {
+            if (damagable != null)
+            {
+                damagable.DealDamage(bulletDamage);
+            }
         }
+        
         Invoke("DetroyBullet", DestroyBulletAfterCollisionTime);
     }
 
